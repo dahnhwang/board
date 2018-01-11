@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IBoardDao">
+	<resultMap type="board" id="boardMap">
+		<id column="b_id" property="bId" />
+		<result column="b_content" property="bContent" />
+		<result column="m_id" property="mId" />
+		<result column="b_pwd" property="bPwd" />
+		<result column="b_datetime" property="bDatetime" />
+		<result column="group_id" property="groupId" />
+		<result column="group_seq" property="groupSeq" />
+		<result column="group_lv" property="groupLv" />
+		<result column="f_id" property="fId" />
+		<result column="is_private" property="isPrivate" />
+		<result column="is_updated" property="isUpdated" />
+		<result column="is_deleted" property="isDeleted" />
+	</resultMap>
+
+	<select id="selectList" parameterType="java.util.HashMap"
+		resultMap="boardMap">
+		SELECT * FROM board
+		<!-- 여기 검색에 관한 것 추가해야 함 -->
+		WHERE
+		<if test="mode != 0">
+			1=0
+			<if test='title != null'>
+				OR title LIKE '%${title}%' <!-- 여기서 $는 ''을 빼고 순수 문자열을 말함 -->
+			</if>
+			<if test='bContent != null'>
+				OR b_content LIKE '%${bContent}%'
+			</if>
+			AND
+		</if>
+		is_deleted != 1<!-- 삭제되었다고 표시된 글 빼고 -->
+		ORDER BY group_id DESC, group_seq ASC
+		LIMIT #{skip}, #{count}
+	</select>
+
+	<select id="getBoardCount" resultType="int">
+		SELECT COUNT(*) FROM board
+		WHERE is_deleted != 1
+	</select>
+
+	<select id="selectBoard" parameterType="int" resultMap="boardMap">
+		SELECT *
+		FROM board WHERE b_id=#{bId}
+	</select>
+
+	<insert id="insertBoard" parameterType="board" keyProperty="bId"
+		useGeneratedKeys="true">
+		INSERT INTO board VALUES(0, #{title}, #{bContent},
+		#{mId}, #{bPwd}, now(), 0, #{groupId}, #{groupSeq}, #{groupLv},
+		#{fId}, #{isPrivate}, 0, 0)
+	</insert>
+
+	<update id="updateGroupSeq" parameterType="java.util.HashMap">
+		UPDATE board SET
+		group_seq = group_seq + 1
+		WHERE group_id=#{groupId} AND group_seq >=
+		#{groupSeq}
+	</update>
+
+	<update id="updateBoard" parameterType="board">
+		UPDATE board SET
+		title=#{title}, b_content=#{bContent}, f_id=#{fId},
+		is_private=#{isPrivate}, hit=#{hit},
+		is_updated=#{isUpdated},
+		is_deleted=#{isDeleted},group_id=#{groupId} WHERE b_id=#{bId}
+	</update>
+
+	<select id="getSearchListCount" parameterType="java.util.HashMap"
+		resultType="int">
+		SELECT COUNT(*) FROM (SELECT * FROM board
+		WHERE 1=0
+		<if test="title != null">
+			OR title LIKE '%${title}%'
+		</if>
+		<if test="content != null">
+			OR content LIKE '%${content}%'
+		</if>
+		AND is_deleted != 1
+		) search
+	</select>
+
+</mapper>

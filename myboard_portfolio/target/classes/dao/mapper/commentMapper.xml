@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.ICommentDao">
+
+	<resultMap type="comment" id="commentMap">
+		<id column="c_id" property="cId" />
+		<result column="c_content" property="cContent" />
+		<result column="m_id" property="mId" />
+		<result column="b_id" property="bId" />
+		<result column="c_datetime" property="cDatetime" />
+		<result column="group_id" property="groupId" />
+		<result column="group_seq" property="groupSeq" />
+		<result column="group_lv" property="groupLv" />
+	</resultMap>
+
+	<select id="selectCommentById" parameterType="int" resultMap="commentMap">
+		SELECT * FROM comment WHERE b_id=#{bId}
+		ORDER BY group_id DESC,
+		group_seq ASC
+	</select>
+
+	<select id="countComment" parameterType="int" resultType="int">
+		SELECT
+		COUNT(*) FROM
+		comment WHERE b_id=#{bId}
+	</select>
+
+	<insert id="insertComment" parameterType="comment"
+		useGeneratedKeys="true" keyProperty="cId">
+		INSERT INTO comment VALUES(0,
+		#{cContent}, #{mId}, #{bId}, now(),
+		#{groupId}, #{groupSeq},
+		#{groupLv})
+	</insert>
+
+	<update id="updateComment" parameterType="comment">
+		UPDATE comment SET
+		c_id=#{cId},
+		c_content=#{cContent},
+		c_datetime=now(),group_id=${groupId} WHERE c_id=#{cId}
+	</update>
+
+	<delete id="deleteComment" parameterType="int">
+		DELETE comment WHERE
+		c_id=#{cId}
+	</delete>
+
+	<update id="updateGroupSeq" parameterType="java.util.HashMap">
+		UPDATE comment SET
+		group_seq = group_seq + 1
+		WHERE group_id=#{groupId} AND group_seq >=
+		#{groupSeq}
+	</update>
+
+	<select id="selectOne" parameterType="int" resultMap="commentMap">
+		SELECT *
+		FROM comment
+		WHERE
+		c_id=#{cId}
+	</select>
+
+	<select id="countReComment" parameterType="java.util.HashMap"
+		resultType="int">
+		SELECT COUNT(*) FROM (SELECT c_id FROM comment WHERE
+		group_id=${groupId}
+		AND
+		group_seq>${groupSeq} AND group_lv>${groupLv})
+		cnt
+	</select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IBoardHistoryDao">
+
+	<resultMap type="boardHistory" id="boardHistoryMap">
+		<id column="h_id" property="hId" />
+		<result column="b_id" property="bId" />
+		<result column="b_content" property="bContent" />
+		<result column="m_id" property="mId" />
+		<result column="b_pwd" property="bPwd" />
+		<result column="b_datetime" property="bDatetime" />
+		<result column="group_id" property="groupId" />
+		<result column="group_seq" property="groupSeq" />
+		<result column="group_lv" property="groupLv" />
+		<result column="f_id" property="fId" />
+		<result column="is_private" property="isPrivate" />
+		<result column="is_updated" property="isUpdated" />
+		<result column="is_deleted" property="isDeleted" />
+		<result column="m_deleted" property="mDeleted" />
+		<result column="h_datetime" property="hDatetime" />
+	</resultMap>
+	<!-- public int insertBoardHistory(BoardHistory boardHistory); -->
+
+	<insert id="insertBoardHistory" parameterType="boardHistory"
+		keyProperty="hId" useGeneratedKeys="true">
+		INSERT INTO board_history VALUES(0,
+		#{bId},
+		#{title}, #{bContent},
+		#{mId}, #{bPwd}, #{bDatetime}, #{hit},
+		#{groupId},
+		#{groupSeq},
+		#{groupLv},
+		#{fId}, #{isPrivate}, #{isUpdated},
+		#{isDeleted}, #{mDeleted}, now())
+	</insert>
+
+
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IFileDao">
+
+	<resultMap type="file" id="fileMap">
+		<id column="f_id" property="fId" />
+		<result column="f_name" property="fName" />
+		<result column="f_size" property="fSize" />
+		<result column="f_uri" property="fUri" />
+		<result column="f_hash" property="fHash" />
+	</resultMap>
+
+	<insert id="insertFile" useGeneratedKeys="true" keyProperty="fId"
+		parameterType="file">
+		INSERT INTO file VALUES(0, #{fName}, #{fSize}, #{fUri},
+		#{fHash})
+	</insert>
+
+	<select id="selectFile" parameterType="int" resultMap="fileMap">
+		SELECT *
+		FROM file WHERE f_id=#{fId}
+	</select>
+
+
+</mapper>

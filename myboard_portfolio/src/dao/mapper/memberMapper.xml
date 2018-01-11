@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IMemberDao">
+
+	<resultMap type="member" id="memberMap">
+		<id column="m_id" property="mId" />
+		<result column="m_name" property="mName" />
+		<result column="m_pwd" property="mPwd" />
+		<result column="m_email" property="mEmail" />
+		<result column="is_withdraw" property="isWithdraw" />
+	</resultMap>
+
+	<select id="selectAllMember" resultMap="memberMap">
+		SELECT * FROM member;
+	</select>
+
+	<insert id="insertMember" keyProperty="mId" useGeneratedKeys="true"
+		parameterType="member">
+		INSERT INTO member VALUES (0, #{mName}, #{mPwd},
+		#{mEmail}, 0)
+	</insert>
+
+	<select id="checkMember" parameterType="String" resultType="int">
+		SELECT COUNT(m_email) FROM member WHERE m_email=#{mEmail}
+		<!-- 리턴값이 0이면 사용가능한 이메일, 1이면 사용불가 이메일(회원있음) -->
+	</select>
+
+
+
+	<select id="selectMember" parameterType="int" resultMap="memberMap">
+		SELECT *
+		FROM member WHERE m_id=#{mId}
+	</select>
+
+	<select id="checkPassword" parameterType="String" resultType="String">
+		SELECT m_pwd FROM member WHERE m_email=#{mEmail}
+	</select>
+
+	<select id="selectMemberFromEmail" parameterType="String"
+		resultMap="memberMap">
+		SELECT * FROM member WHERE m_email=#{mEmail}
+	</select>
+
+	<update id="deleteMember" parameterType="int">
+		UPDATE member SET
+		is_withdraw=1 WHERE m_id=#{mId}
+	</update>
+
+
+	<!-- for cafe24 -->
+	<!-- <select id="selectAllMember" resultMap="memberMap"> SELECT * FROM board_member; 
+		</select> <insert id="insertMember" keyProperty="mId" useGeneratedKeys="true" 
+		parameterType="member"> INSERT INTO board_member VALUES (0, #{mName}, #{mPwd}, 
+		#{mEmail}, 0) </insert> <select id="checkMember" parameterType="String" resultType="int"> 
+		SELECT COUNT(m_email) FROM board_member WHERE m_email=#{mEmail} 리턴값이 0이면 
+		사용가능한 이메일, 1이면 사용불가 이메일(회원있음) </select> <select id="selectMember" parameterType="int" 
+		resultMap="memberMap"> SELECT * FROM board_member WHERE m_id=#{mId} </select> 
+		<select id="checkPassword" parameterType="String" resultType="String"> SELECT 
+		m_pwd FROM board_member WHERE m_email=#{mEmail} </select> <select id="selectMemberFromEmail" 
+		parameterType="String" resultMap="memberMap"> SELECT * FROM board_member 
+		WHERE m_email=#{mEmail} </select> <update id="deleteMember" parameterType="int"> 
+		UPDATE board_member SET is_withdraw=1 WHERE m_id=#{mId} </update> -->
+
+
+</mapper>
